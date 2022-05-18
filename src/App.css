@@ -29,6 +29,7 @@ nav {
 
 .nav-left, .nav-right {
   width: 125px;
+  font-size: 20px;
 }
 
 .nav-left a,
@@ -76,14 +77,14 @@ nav h1 {
   flex: 33%;
   display: flex;
   flex-direction: row;
-  margin: 5px;
+  margin: 1px;
 }
 
 .letter {
   flex: 33%;
-  height: 100%;
+  height: 75px;
   border: 1px solid grey;
-  margin: 5px;
+  margin: 0 5px;
   display: grid;
   place-items: center;
   font-size: 30px;
@@ -158,4 +159,60 @@ nav h1 {
 }
 #disabled {
   background-color: #3a393c;
+}
+
+@media only screen and (max-width: 600px) {
+  .board {
+    width: 85%;
+    height: 85%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  nav {
+    padding: 15px 0;
+  }
+
+  nav h1 {
+    font-size: 20px;
+  }
+
+
+  .nav-right {
+    width: 120px;
+    font-size: 12px;
+    padding: 0;
+    margin: 0;
+  }
+  .nav-left {
+    width: 110px;
+    font-size: 18px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .letter {
+    flex: 33%;
+    height: 55px;
+    border: 1px solid grey;
+    margin: 0 5px;
+    display: grid;
+    place-items: center;
+    font-size: 30px;
+    font-weight: bolder;
+    color: white;
+    font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .key {
+    width: 28px;
+    height: 40px;
+    margin: 3px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  #big {
+    width: 50px;
+  }
 }
