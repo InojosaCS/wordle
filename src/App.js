@@ -1,10 +1,14 @@
-import './App.css';
-import Board from './components/Board';
 import { createContext, useEffect, useState } from 'react';
 import { boardDefault, boardColorDefault, getWords } from './Words';
-import Keyboard from './components/Keyboard';
-import Alert from 'react-bootstrap/Alert'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Alert from 'react-bootstrap/Alert'
+import Button from 'react-bootstrap/Button'
+
+import './App.css';
+import Board from './components/Board';
+import Keyboard from './components/Keyboard';
+import Instructions from './components/Instructions';
+
 
 export const AppContext = createContext();
 
@@ -16,15 +20,23 @@ function App() {
   const [correctWord, setCorrectWord] = useState(null);
   const [words, setWords] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alert, setAlert] = useState({ message: '', type: '' });
+  const [disabledLetters, setDisabledLetters] = useState([]);
+  const [gameStatus, setGameStatus] = useState({ gameOver: false, winner: false });
+
+  const restartGame = (e) => {
+    window.location.reload(false);
+  }
 
   useEffect(() => {
     getWords()
       .then(data => {
         setCorrectWord(data.correctWord);
+        console.log(data.correctWord);
         setWords(data.words);
       });
   }, []);
+
 
   const evaluateAttempt = (guess, attempt) => {
     const countLetters = {};
@@ -42,32 +54,59 @@ function App() {
       }
     }
 
+    let newDisabledLetters = [];
     for (let i = 0; i < 5; i++) {
       if (correctWord.includes(guess[i]) && countLetters[guess[i]] > 0 && newRowBoardColor[i] !== "correct") {
         newRowBoardColor[i] = "misplaced";
         countLetters[guess[i]]--;
       }
+      if (newRowBoardColor[i] === "error") {
+        newDisabledLetters.push(guess[i]);
+      }
     }
 
+    setDisabledLetters([...disabledLetters, ...newDisabledLetters]);
     let newBoardColor = [...boardColor];
     newBoardColor[attempt] = newRowBoardColor;
     setBoardColor(newBoardColor);
     return newRowBoardColor.every(color => color === "correct");
   }
 
+  const winningGame = () => {
+    setAlert({ message: `${correctWord} is correct!`, type: "success" });
+    setShowAlert(true);
+    setGameStatus({ gameOver: true, winner: true });
+  }
+
+  const losingGame = () => {
+    setAlert({ message: `You lost, the correct word was ${correctWord}!`, type: "danger" });
+    setShowAlert(true);
+    setGameStatus({ gameOver: true, winner: false });
+  }
+
+
   const onEnter = () => {
     if (currentAttempt.letterPos === 5) {
       const guess = board[currentAttempt.attempt].join("");
+
       if (!words.has(guess)) {
-        setAlertMessage(`${guess} is not a word in the dictionary.`);
+        setAlert({ message: `${guess} is not in the dictionary!`, type: "danger" });
         setShowAlert(true);
-        setTimeout(() => {
-          // After 3 seconds set the show value to false
-          setShowAlert(false)
-        }, 4500)
+        setTimeout(() => { setShowAlert(false); }, 4500)
         return;
       }
+
       const result = evaluateAttempt(board[currentAttempt.attempt], currentAttempt.attempt);
+
+      if (result) {
+        winningGame();
+        return;
+      }
+      if (currentAttempt.attempt === 5) {
+        losingGame();
+        return;
+      }
+
       setCurrentAttempt({ attempt: currentAttempt.attempt + 1, letterPos: 0 });
     }
   }
@@ -94,9 +133,6 @@ function App() {
 
   return (
     <div className="App">
-      <nav>
-        <h1>Wordle</h1>
-      </nav>
       <AppContext.Provider value={
         {
           board,
@@ -107,14 +143,27 @@ function App() {
           onEnter,
           onKeyPress,
           correctWord,
-          boardColor
+          boardColor,
+          disabledLetters,
+          gameStatus, 
         }}>
+        <nav>
+          <div className='nav-left'><a href='./'>Home</a></div>
+          <h1>Wordle</h1>
+          <div className='nav-right'><Instructions /></div>
+        </nav>
+
         <div className='game'>
-          <Alert show={showAlert} variant="danger" className="alert" >
-            {alertMessage}
+          <Alert show={showAlert} variant={alert.type} className="alert" >
+            {alert.message}
           </Alert>
           <Board />
-          <Keyboard />
+          {gameStatus.gameOver ?
+            <Button className='play-again' variant="light" onClick={restartGame}>
+              Play Again?
+            </Button> :
+            <Keyboard />
+          }
         </div>
       </AppContext.Provider>
     </div>

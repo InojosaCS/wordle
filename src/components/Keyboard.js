@@ -3,12 +3,13 @@ import Key from './Key';
 import { AppContext } from '../App';
 
 function Keyboard() {
-	const keyline1 = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
-	const keyline2 = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'];
-	const keyline3 = ['z', 'x', 'c', 'v', 'b', 'n', 'm'];
-	const { onDelete, onEnter, onKeyPress } = useContext(AppContext);
+	const keyline1 = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
+	const keyline2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
+	const keyline3 = ['Z', 'X', 'C', 'V', 'B', 'N', 'M'];
+	const { onDelete, onEnter, onKeyPress, disabledLetters, gameStatus } = useContext(AppContext);
 
 	const handleKeyDown = useCallback((e) => {
+		if(gameStatus.gameOver) return;
 		if(e.key === 'Backspace') {
 			onDelete();
 		} else if(e.key === 'Enter') {
@@ -28,15 +29,33 @@ function Keyboard() {
 	return (
 		<div className='keyboard' onKeyDown={handleKeyDown}>
 			<div className='line1'>
-				{keyline1.map((letter) => <Key letter={letter} />)}
+				{keyline1.map((letter) => 
+					<Key 
+						letter={letter} 
+						isDisabled={disabledLetters.includes(letter)}
+						key={letter.charCodeAt(0)}
+					/>
+				)}
 			</div>
 			<div className='line2'>
-				{keyline2.map((letter) => <Key letter={letter} />)}
+				{keyline2.map((letter) => 
+					<Key 
+						letter={letter} 
+						isDisabled={disabledLetters.includes(letter)}
+						key={letter.charCodeAt(0)}
+					/>
+				)}
 			</div>
 			<div className='line3'>
-				<Key letter={"Enter"} bigKey={true} />
-				{keyline3.map((letter) => <Key letter={letter} />)}
-				<Key letter={"Delete"} bigKey={true} />
+				<Key letter={"Enter"} bigKey={true} key={0} />
+				{keyline3.map((letter) => 	
+					<Key 
+						letter={letter} 
+						isDisabled={disabledLetters.includes(letter)}
+						key={letter.charCodeAt(0)}
+					/>
+				)}
+				<Key letter={"Delete"} bigKey={true} key={-1} />
 			</div>
 		</div>
 	)
