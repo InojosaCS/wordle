@@ -1,5 +1,5 @@
 import wordsList from './data-bank/words-list.txt';
-import commonWordsList from './data-bank/common-words-list.txt';
+import wordsAllowed from './data-bank/wordle-allowed-guesses.txt';
 
 export const boardDefault = [
 	["", "", "", "", ""],
@@ -21,15 +21,24 @@ export const boardColorDefault = [
 
 export const getWords = async () => {
 	let words;
+	let correctWord;
 	
 	await fetch(wordsList)
 		.then(response => response.text())
 		.then(text => {
 			words = text.split('\n');
-		});
+			words = words.map(word => word.toUpperCase());
+			correctWord = words[Math.floor(Math.random() * words.length)];
+	});
+	
 
-	words = words.map(word => word.toUpperCase());
-	const correctWord = words[Math.floor(Math.random() * words.length)];
-	words = new Set(words);
+	await fetch(wordsAllowed)
+		.then(response => response.text())
+		.then(text => {
+			words = text.split('\n');
+			words = words.map(word => word.toUpperCase());
+			words = new Set(words);
+	});
+
 	return { words, correctWord }; 
 }

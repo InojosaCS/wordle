@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { AppContext } from '../App';
 
-function Key({ letter, bigKey, isDisabled }) {
+function Key({ letter, bigKey, isDisabled, isCorrect, isMisplaced }) {
 	const { onDelete, onEnter, onKeyPress, gameStatus } = useContext(AppContext);
 
 	const selectKey = () => {
 		if(gameStatus.gameOver) return;
-		if(letter === 'Backspace') {
+		if(letter === 'Delete') {
 			onDelete();
 		} else if(letter === 'Enter') {
 			onEnter();
@@ -17,7 +17,7 @@ function Key({ letter, bigKey, isDisabled }) {
 
 	return (
 		<div className='key' 
-			id={bigKey ? "big" : (isDisabled ? "disabled" : undefined)} 
+			id={bigKey ? "big" :  (isCorrect ? "correct" :  (isMisplaced ? "misplaced" :(isDisabled ? "disabled" : undefined)))} 
 			onClick={selectKey}>
 			{letter}
 		</div>

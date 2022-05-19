@@ -6,7 +6,14 @@ function Keyboard() {
 	const keyline1 = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
 	const keyline2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
 	const keyline3 = ['Z', 'X', 'C', 'V', 'B', 'N', 'M'];
-	const { onDelete, onEnter, onKeyPress, disabledLetters, gameStatus } = useContext(AppContext);
+	const { 
+		onDelete, 
+		onEnter, 
+		onKeyPress, 
+		disabledLetters, 
+		correctLetters,
+		misplacedLetters,
+		gameStatus } = useContext(AppContext);
 
 	const handleKeyDown = useCallback((e) => {
 		if(gameStatus.gameOver) return;
@@ -33,6 +40,8 @@ function Keyboard() {
 					<Key 
 						letter={letter} 
 						isDisabled={disabledLetters.includes(letter)}
+						isCorrect={correctLetters.includes(letter)}
+						isMisplaced={misplacedLetters.includes(letter)}
 						key={letter.charCodeAt(0)}
 					/>
 				)}
@@ -42,6 +51,8 @@ function Keyboard() {
 					<Key 
 						letter={letter} 
 						isDisabled={disabledLetters.includes(letter)}
+						isCorrect={correctLetters.includes(letter)}
+						isMisplaced={misplacedLetters.includes(letter)}
 						key={letter.charCodeAt(0)}
 					/>
 				)}
@@ -52,6 +63,8 @@ function Keyboard() {
 					<Key 
 						letter={letter} 
 						isDisabled={disabledLetters.includes(letter)}
+						isMisplaced={misplacedLetters.includes(letter)}
+						isCorrect={correctLetters.includes(letter)}
 						key={letter.charCodeAt(0)}
 					/>
 				)}

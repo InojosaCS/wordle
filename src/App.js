@@ -22,6 +22,8 @@ function App() {
   const [showAlert, setShowAlert] = useState(false);
   const [alert, setAlert] = useState({ message: '', type: '' });
   const [disabledLetters, setDisabledLetters] = useState([]);
+  const [correctLetters, setCorrectLetters] = useState([]);
+  const [misplacedLetters, setMisplacedLetters] = useState([]);
   const [gameStatus, setGameStatus] = useState({ gameOver: false, winner: false });
 
   const restartGame = (e) => {
@@ -55,17 +57,28 @@ function App() {
     }
 
     let newDisabledLetters = [];
+    let newCorrectLetters = [];
+    let newMisplacedLetters = [];
+
     for (let i = 0; i < 5; i++) {
       if (correctWord.includes(guess[i]) && countLetters[guess[i]] > 0 && newRowBoardColor[i] !== "correct") {
         newRowBoardColor[i] = "misplaced";
         countLetters[guess[i]]--;
+        if(!newCorrectLetters.includes(guess[i])) {
+          newMisplacedLetters.push(guess[i]);
+        }
       }
-      if (newRowBoardColor[i] === "error") {
+      if (newRowBoardColor[i] === "error" && !correctWord.includes(guess[i])) {
         newDisabledLetters.push(guess[i]);
+      }
+      if (newRowBoardColor[i] === "correct") {
+        newCorrectLetters.push(guess[i]);
       }
     }
 
     setDisabledLetters([...disabledLetters, ...newDisabledLetters]);
+    setCorrectLetters([...correctLetters, ...newCorrectLetters]);
+    setMisplacedLetters([...misplacedLetters, ...newMisplacedLetters]);
     let newBoardColor = [...boardColor];
     newBoardColor[attempt] = newRowBoardColor;
     setBoardColor(newBoardColor);
@@ -90,6 +103,7 @@ function App() {
       const guess = board[currentAttempt.attempt].join("");
 
       if (!words.has(guess)) {
+        onDelete();
         setAlert({ message: `${guess} is not in the dictionary!`, type: "danger" });
         setShowAlert(true);
         setTimeout(() => { setShowAlert(false); }, 4500)
@@ -145,6 +159,8 @@ function App() {
           correctWord,
           boardColor,
           disabledLetters,
+          correctLetters,
+          misplacedLetters,
           gameStatus, 
         }}>
         <nav>

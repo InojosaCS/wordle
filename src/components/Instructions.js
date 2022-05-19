@@ -21,7 +21,7 @@ function Instructions() {
 				<Modal.Body>
 					<ol>
 						<li>You have to guess the Wordle in six goes or less.</li>
-						<li>Every word you enter must be in the word list. ...</li>
+						<li>Every word you enter must be in the word <a href=''>list.</a></li>
 						<li>A correct letter turns green.</li>
 						<li>A correct letter in the wrong place turns yellow.</li>
 						<li>An incorrect letter turns gray.</li>
